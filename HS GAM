@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Horse Racing Game</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f0f2f5;
+            text-align: center;
+        }
+        #raceTrack {
+            width: 80%;
+            height: 300px;
+            border: 2px solid #000;
+            position: relative;
+            margin: 20px auto;
+            overflow: hidden;
+            background-color: #e4e6eb;
+        }
+        .horse {
+            width: 50px;
+            height: 30px;
+            position: absolute;
+            bottom: 0;
+            background-color: #0084ff;
+            border-radius: 5px;
+        }
+        .start-button, .bet-button {
+            padding: 10px 20px;
+            background-color: #0084ff;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 16px;
+            margin: 10px;
+        }
+        .start-button:hover, .bet-button:hover {
+            background-color: #0073e6;
+        }
+        #bettingSection {
+            margin: 20px;
+        }
+    </style>
+</head>
+<body>
+    <h1>Horse Racing Game</h1>
+    <div id="bettingSection">
+        <label for="horseSelect">Choose a horse (1-3):</label>
+        <select id="horseSelect">
+            <option value="0">Horse 1</option>
+            <option value="1">Horse 2</option>
+            <option value="2">Horse 3</option>
+        </select>
+        <input type="number" id="betAmount" placeholder="Bet Amount" min="1">
+        <button class="bet-button" onclick="placeBet()">Place Bet</button>
+    </div>
+    <div id="raceTrack">
+        <div class="horse" id="horse1"></div>
+        <div class="horse" id="horse2"></div>
+        <div class="horse" id="horse3"></div>
+    </div>
+    <button class="start-button" onclick="startRace()">Start Race</button>
+    <div id="result"></div>
+
+    <script>
+        let betAmount = 0;
+        let selectedHorse = -1;
+
+        function placeBet() {
+            const horseSelect = document.getElementById('horseSelect');
+            selectedHorse = horseSelect.value;
+            betAmount = document.getElementById('betAmount').value;
+            if (betAmount <= 0) {
+                alert("Please enter a valid bet amount.");
+            } else {
+                alert(`You have placed a bet of $${betAmount} on Horse ${parseInt(selectedHorse) + 1}.`);
+            }
+        }
+
+        function startRace() {
+            const horses = document.querySelectorAll('.horse');
+            horses.forEach(horse => {
+                horse.style.left = '0px'; // Reset position
+                const raceDistance = Math.random() * 1000 + 500; // Random distance
+                horse.style.transition = `left ${raceDistance / 100}px linear`;
+                setTimeout(() => {
+                    horse.style.left = `${raceDistance}px`;
+                }, 100);
+            });
+
+            setTimeout(() => {
+                determineWinner(horses);
+            }, 3000); // Wait for the race to finish
+        }
+
+        function determineWinner(horses) {
+            let winnerIndex = 0;
+            let maxDistance = 0;
+
+            horses.forEach((horse, index) => {
+                const distance = parseInt(horse.style.left);
+                if (distance > maxDistance) {
+                    maxDistance = distance;
+                    winnerIndex = index;
+                }
+            });
+
+            const resultText = `Horse ${winnerIndex + 1} wins!`;
+            document.getElementById('result').innerText = resultText;
+
+            if (selectedHorse == winnerIndex) {
+                alert(`Congratulations! You won $${betAmount}!`);
+            } else {
+                alert(`Sorry! You lost your bet of $${betAmount}.`);
+            }
+        }
+    </script>
+</body>
+</html>
